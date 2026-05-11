@@ -4,8 +4,11 @@ exports.handler = async function(event) {
   }
   try {
     const body = JSON.parse(event.body);
-    body.model = 'claude-sonnet-4-5-20251001';
-    
+    body.model = 'claude-haiku-4-5-20251001';
+    body.max_tokens = 1000;
+
+    console.log('Enviando a Anthropic:', JSON.stringify(body).substring(0, 200));
+
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -15,16 +18,23 @@ exports.handler = async function(event) {
       },
       body: JSON.stringify(body)
     });
-    const data = await response.json();
+
+    const text = await response.text();
+    console.log('Respuesta Anthropic:', text.substring(0, 300));
+
     return {
       statusCode: 200,
       headers: { 
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(data)
+      body: text
     };
   } catch(e) {
-    return { statusCode: 500, body: JSON.stringify({ error: e.message }) };
+    console.log('Error:', e.message);
+    return { 
+      statusCode: 500, 
+      body: JSON.stringify({ error: e.message }) 
+    };
   }
 };
