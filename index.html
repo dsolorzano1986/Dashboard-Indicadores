@@ -31,24 +31,12 @@
 
   header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
   header h1 { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; }
-  header .header-right { display: flex; align-items: center; gap: 12px; }
   header span { font-size: 12px; color: var(--text2); }
-  #btn-refresh { background: var(--accent); color: white; border: none; border-radius: 6px; padding: 6px 14px; font-size: 12px; font-weight: 600; cursor: pointer; }
-  #btn-refresh:hover { background: var(--accent2); }
-  #btn-refresh:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  /* Login screen */
-  #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh; text-align: center; padding: 40px; }
-  #login-screen .logo { font-size: 48px; margin-bottom: 20px; }
-  #login-screen h2 { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
-  #login-screen p { color: var(--text2); font-size: 14px; margin-bottom: 28px; max-width: 380px; }
-  #btn-login { background: #0078d4; color: white; border: none; border-radius: 8px; padding: 12px 28px; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 10px; }
-  #btn-login:hover { background: #005a9e; }
-  #btn-login svg { width: 20px; height: 20px; }
-  .login-note { margin-top: 16px; font-size: 12px; color: var(--text2); }
-
-  /* Status bar */
-  #status-bar { background: var(--amber-bg); border-bottom: 1px solid #f0d080; padding: 8px 24px; font-size: 12px; color: var(--amber); display: none; }
+  .upload-bar { background: var(--accent); color: white; padding: 10px 24px; display: flex; align-items: center; gap: 12px; }
+  .upload-bar label { cursor: pointer; background: white; color: var(--accent); font-weight: 600; font-size: 12px; padding: 6px 14px; border-radius: 6px; }
+  .upload-bar input { display: none; }
+  #file-name { font-size: 12px; opacity: 0.85; }
 
   .main { padding: 20px 24px; max-width: 1200px; margin: 0 auto; }
 
@@ -62,12 +50,15 @@
   .kpi.blue .value { color: var(--accent); }
 
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-  @media (max-width: 800px) { .grid2 { grid-template-columns: 1fr; } }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media (max-width: 800px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
 
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); }
   .card h2 { font-size: 13px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 14px; }
+
   .chart-wrap { position: relative; width: 100%; }
 
+  /* Tabla proyectos */
   .proj-table { width: 100%; border-collapse: collapse; font-size: 12px; }
   .proj-table th { text-align: left; color: var(--text2); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; padding: 6px 8px; border-bottom: 1px solid var(--border); }
   .proj-table td { padding: 8px 8px; border-bottom: 1px solid var(--border); vertical-align: middle; }
@@ -77,9 +68,11 @@
   .s-dia { background: var(--green-bg); color: var(--green); }
   .s-entregado { background: var(--blue-bg); color: var(--accent2); }
   .s-iniciar { background: var(--amber-bg); color: var(--amber); }
-  .progress-bar { background: #e8e6e0; border-radius: 4px; height: 6px; overflow: hidden; width: 100%; }
-  .progress-fill { height: 100%; border-radius: 4px; }
 
+  .progress-bar { background: #e8e6e0; border-radius: 4px; height: 6px; overflow: hidden; width: 100%; }
+  .progress-fill { height: 100%; border-radius: 4px; transition: width 0.4s; }
+
+  /* Cumplimiento table */
   .cump-table { width: 100%; border-collapse: collapse; font-size: 12px; }
   .cump-table th { text-align: left; color: var(--text2); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; padding: 6px 8px; border-bottom: 1px solid var(--border); }
   .cump-table td { padding: 7px 8px; border-bottom: 1px solid var(--border); }
@@ -89,13 +82,14 @@
   .p-faltante { background: var(--red-bg); color: var(--red); }
   .p-excedido { background: var(--amber-bg); color: var(--amber); }
 
+  /* Chat IA */
   .chat-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 20px; }
   .chat-header { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
   .chat-header .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
   .chat-header span { font-size: 13px; font-weight: 600; }
   .chat-header small { font-size: 11px; color: var(--text2); margin-left: auto; }
-  .chat-msgs { padding: 12px 16px; min-height: 100px; max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-  .msg { padding: 8px 12px; border-radius: 8px; font-size: 13px; line-height: 1.5; max-width: 85%; white-space: pre-wrap; }
+  .chat-msgs { padding: 12px 16px; min-height: 120px; max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+  .msg { padding: 8px 12px; border-radius: 8px; font-size: 13px; line-height: 1.5; max-width: 85%; }
   .msg.ai { background: var(--surface2); color: var(--text); align-self: flex-start; border: 1px solid var(--border); }
   .msg.user { background: var(--accent); color: white; align-self: flex-end; }
   .msg.loading { color: var(--text2); font-style: italic; }
@@ -103,265 +97,134 @@
   .chat-input-row input { flex: 1; border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; font-size: 13px; outline: none; background: var(--bg); }
   .chat-input-row input:focus { border-color: var(--accent); }
   .chat-input-row button { background: var(--accent); color: white; border: none; border-radius: 6px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .chat-input-row button:hover { background: var(--accent2); }
   .chat-input-row button:disabled { opacity: 0.5; cursor: not-allowed; }
   .quick-btns { padding: 0 12px 10px; display: flex; flex-wrap: wrap; gap: 6px; }
   .quick-btn { border: 1px solid var(--border); background: var(--surface2); color: var(--text2); border-radius: 20px; padding: 4px 12px; font-size: 11px; cursor: pointer; }
   .quick-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--blue-bg); }
 
+  #no-data { text-align: center; padding: 60px 20px; color: var(--text2); }
+  #no-data .icon { font-size: 48px; margin-bottom: 12px; }
+  #no-data p { font-size: 15px; margin-bottom 6px; }
+  #no-data small { font-size: 12px; }
+
   #dashboard { display: none; }
-  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
 
 <header>
   <h1>📊 Dashboard Indicadores 2026</h1>
-  <div class="header-right">
-    <span id="last-update"></span>
-    <button id="btn-refresh" onclick="refreshData()" style="display:none">↻ Actualizar datos</button>
-  </div>
+  <span id="last-update">Sin datos cargados</span>
 </header>
 
-<div id="status-bar"></div>
+<div class="upload-bar">
+  <label for="fileInput">⬆ Cargar Excel actualizado</label>
+  <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" onchange="loadFile(this.files[0])">
+  <span id="file-name">Sube tu Excel para ver los gráficos</span>
+</div>
 
 <div class="main">
 
-  <!-- LOGIN -->
-  <div id="login-screen">
-    <div class="logo">📊</div>
-    <h2>Dashboard Indicadores 2026</h2>
-    <p>Inicia sesión con tu cuenta de Microsoft para cargar automáticamente los datos desde SharePoint.</p>
-    <button id="btn-login" onclick="login()">
-      <svg viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="10" height="10" fill="#f25022"/><rect x="12" y="1" width="10" height="10" fill="#7fba00"/><rect x="1" y="12" width="10" height="10" fill="#00a4ef"/><rect x="12" y="12" width="10" height="10" fill="#ffb900"/></svg>
-      Iniciar sesión con Microsoft
-    </button>
-    <p class="login-note">Solo necesitas iniciar sesión una vez por sesión del navegador.<br>Tus credenciales nunca se almacenan en este archivo.</p>
+  <div id="no-data">
+    <div class="icon">📁</div>
+    <p><strong>Sube tu archivo Excel para comenzar</strong></p>
+    <small>Haz clic en "Cargar Excel actualizado" arriba · Funciona con .xlsx, .xls</small>
   </div>
 
-  <!-- DASHBOARD -->
   <div id="dashboard">
+
+    <!-- KPIs -->
     <div class="kpi-grid" id="kpi-grid"></div>
-    <div class="grid2">
+
+    <!-- Fila 1: cumplimiento + tiempo por semana -->
+    <div class="grid2" id="row1">
       <div class="card">
         <h2>Cumplimiento semanal por funcionario</h2>
         <div id="cump-table-wrap"></div>
       </div>
       <div class="card">
-        <h2>Minutos reportados por semana</h2>
-        <div class="chart-wrap" style="height:260px"><canvas id="chartSemana" role="img" aria-label="Minutos reportados por semana"></canvas></div>
+        <h2>Horas reportadas por semana (minutos)</h2>
+        <div class="chart-wrap" style="height:260px"><canvas id="chartSemana" role="img" aria-label="Horas reportadas por semana"></canvas></div>
       </div>
     </div>
-    <div class="grid2">
+
+    <!-- Fila 2: estado proyectos + avance -->
+    <div class="grid2" id="row2">
       <div class="card">
         <h2>Estado de proyectos</h2>
-        <div class="chart-wrap" style="height:220px"><canvas id="chartEstado" role="img" aria-label="Estado proyectos"></canvas></div>
+        <div class="chart-wrap" style="height:220px"><canvas id="chartEstado" role="img" aria-label="Distribución estado proyectos"></canvas></div>
       </div>
       <div class="card">
         <h2>Avance de proyectos activos</h2>
         <div id="proj-table-wrap" style="max-height:240px;overflow-y:auto"></div>
       </div>
     </div>
-    <div class="grid2">
+
+    <!-- Fila 3: tiempo por departamento + actividades -->
+    <div class="grid2" id="row3">
       <div class="card">
-        <h2>Tiempo total por departamento (horas)</h2>
+        <h2>Tiempo total por departamento</h2>
         <div class="chart-wrap" style="height:220px"><canvas id="chartDepto" role="img" aria-label="Tiempo por departamento"></canvas></div>
       </div>
       <div class="card">
-        <h2>Top actividades — Consultoría</h2>
-        <div class="chart-wrap" style="height:220px"><canvas id="chartActiv" role="img" aria-label="Actividades consultoría"></canvas></div>
+        <h2>Distribución actividades (Consultoría)</h2>
+        <div class="chart-wrap" style="height:220px"><canvas id="chartActiv" role="img" aria-label="Distribución de actividades"></canvas></div>
       </div>
     </div>
 
+    <!-- Chat IA -->
     <div class="chat-section">
       <div class="chat-header">
         <div class="dot"></div>
         <span>Análisis con IA</span>
-        <small>Pregunta sobre los datos del día</small>
+        <small>Pregunta sobre tus datos cargados</small>
       </div>
       <div class="chat-msgs" id="chat-msgs">
-        <div class="msg ai">Hola 👋 Los datos están cargados desde SharePoint. Puedes preguntarme sobre cumplimiento, proyectos, tendencias o cualquier métrica del equipo.</div>
+        <div class="msg ai">Hola 👋 Ya tengo tus datos cargados. Puedes preguntarme cualquier cosa: tendencias, alertas, comparativos por funcionario, estado de proyectos, etc.</div>
       </div>
       <div class="quick-btns">
         <button class="quick-btn" onclick="askQuick('¿Quién tiene más faltantes de reporte?')">¿Quién tiene más faltantes?</button>
         <button class="quick-btn" onclick="askQuick('¿Cuáles proyectos están más atrasados?')">Proyectos atrasados</button>
-        <button class="quick-btn" onclick="askQuick('Resume el desempeño general del equipo esta semana')">Resumen semanal</button>
-        <button class="quick-btn" onclick="askQuick('¿Qué funcionario tiene mejor cumplimiento histórico?')">Mejor cumplimiento</button>
-        <button class="quick-btn" onclick="askQuick('¿Hay alguna alerta o situación preocupante en los datos?')">Alertas</button>
+        <button class="quick-btn" onclick="askQuick('Resume el desempeño general del equipo')">Resumen general</button>
+        <button class="quick-btn" onclick="askQuick('¿Qué semana tuvo mejor cumplimiento?')">Mejor semana</button>
       </div>
       <div class="chat-input-row">
-        <input type="text" id="chat-input" placeholder="Pregunta sobre los datos..." onkeydown="if(event.key==='Enter') sendChat()">
+        <input type="text" id="chat-input" placeholder="Escribe tu pregunta sobre los datos..." onkeydown="if(event.key==='Enter') sendChat()">
         <button onclick="sendChat()" id="send-btn">Enviar</button>
       </div>
     </div>
-  </div>
 
+  </div>
 </div>
 
 <script>
-// ── CONFIG ──────────────────────────────────────────────────────────────────
-const CLIENT_ID    = 'd7185507-0b8e-4241-918a-9adeb43e5fe5'; // ← reemplazar (ver instrucciones abajo)
-const TENANT_ID    = 'craplicom';           // dominio del tenant
-const SCOPES       = ['Files.Read', 'Sites.Read.All', 'User.Read'];
-
-// Ruta del archivo en SharePoint (extraída de la URL compartida)
-const SITE_HOSTNAME = 'craplicom.sharepoint.com';
-const SITE_PATH     = '/sites/AplicomConsultoria';
-const FILE_PATH     = '/Documentos compartidos/Aplicom - Consultoría/Indicadores Mensuales/Base de datos indicadores 2026 - Claude.xlsx';
-
-// ── ESTADO ──────────────────────────────────────────────────────────────────
-let accessToken  = null;
-let globalData   = null;
-let dataSummary  = '';
 let chartInstances = {};
-let msgCounter   = 0;
+let globalData = null;
+let dataSummary = '';
 
-// ── AUTH (PKCE sin librería externa) ────────────────────────────────────────
-function base64url(buffer) {
-  return btoa(String.fromCharCode(...new Uint8Array(buffer)))
-    .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-}
-async function generatePKCE() {
-  const verifier = base64url(crypto.getRandomValues(new Uint8Array(32)));
-  const enc = new TextEncoder().encode(verifier);
-  const digest = await crypto.subtle.digest('SHA-256', enc);
-  return { verifier, challenge: base64url(digest) };
-}
-
-async function login() {
-  const { verifier, challenge } = await generatePKCE();
-  sessionStorage.setItem('pkce_verifier', verifier);
-  sessionStorage.setItem('post_login_redirect', 'true');
-
-  const params = new URLSearchParams({
-    client_id:             CLIENT_ID,
-    response_type:         'code',
-    redirect_uri:          location.href.split('?')[0],
-    scope:                 SCOPES.join(' '),
-    code_challenge:        challenge,
-    code_challenge_method: 'S256',
-    prompt:                'select_account',
-  });
-  location.href = `https://login.microsoftonline.com/${TENANT_ID}.onmicrosoft.com/oauth2/v2.0/authorize?${params}`;
-}
-
-async function handleCallback() {
-  const params  = new URLSearchParams(location.search);
-  const code    = params.get('code');
-  const verifier = sessionStorage.getItem('pkce_verifier');
-  if (!code || !verifier) return false;
-
-  // Limpia la URL
-  history.replaceState({}, '', location.pathname);
-
-  showStatus('Iniciando sesión...');
-  try {
-    const body = new URLSearchParams({
-      client_id:     CLIENT_ID,
-      grant_type:    'authorization_code',
-      code,
-      redirect_uri:  location.href.split('?')[0],
-      code_verifier: verifier,
-      scope:         SCOPES.join(' '),
-    });
-    const resp = await fetch(`https://login.microsoftonline.com/${TENANT_ID}.onmicrosoft.com/oauth2/v2.0/token`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body
-    });
-    const json = await resp.json();
-    if (json.access_token) {
-      accessToken = json.access_token;
-      sessionStorage.setItem('ms_token', accessToken);
-      hideStatus();
-      return true;
-    } else {
-      showStatus('Error de autenticación: ' + (json.error_description || json.error));
-      return false;
+function loadFile(file) {
+  if (!file) return;
+  document.getElementById('file-name').textContent = 'Cargando ' + file.name + '...';
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const raw = XLSX.utils.sheet_to_json(ws, { defval: '' });
+      globalData = raw;
+      document.getElementById('file-name').textContent = file.name + ' · ' + raw.length + ' registros';
+      document.getElementById('last-update').textContent = 'Actualizado: ' + new Date().toLocaleDateString('es-CR', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+      renderAll(raw);
+      document.getElementById('no-data').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+    } catch(err) {
+      document.getElementById('file-name').textContent = 'Error: ' + err.message;
     }
-  } catch(e) {
-    showStatus('Error de red al autenticar: ' + e.message);
-    return false;
-  }
+  };
+  reader.readAsArrayBuffer(file);
 }
 
-// ── SHAREPOINT ───────────────────────────────────────────────────────────────
-async function fetchExcelFromSharePoint() {
-  showStatus('Conectando con SharePoint...');
-  try {
-    // 1. Obtener site ID
-    const siteResp = await graphGet(`https://graph.microsoft.com/v1.0/sites/${SITE_HOSTNAME}:${SITE_PATH}`);
-    const siteId = siteResp.id;
-
-    // 2. Obtener el archivo por ruta
-    showStatus('Descargando Excel...');
-    const encodedPath = encodeURIComponent(FILE_PATH);
-    const fileResp = await graphGet(`https://graph.microsoft.com/v1.0/sites/${siteId}/drive/root:${encodedPath}:/content`, true);
-
-    // 3. Parsear con SheetJS
-    const buffer = await fileResp.arrayBuffer();
-    const wb = XLSX.read(new Uint8Array(buffer), { type: 'array' });
-    const ws = wb.Sheets[wb.SheetNames[0]];
-    const data = XLSX.utils.sheet_to_json(ws, { defval: '' });
-
-    hideStatus();
-    return data;
-  } catch(e) {
-    showStatus('Error al leer SharePoint: ' + e.message + ' — Verifica que el Client ID esté configurado y tengas acceso al archivo.');
-    return null;
-  }
-}
-
-async function graphGet(url, raw = false) {
-  const resp = await fetch(url, {
-    headers: { Authorization: 'Bearer ' + accessToken }
-  });
-  if (!resp.ok) {
-    const err = await resp.json().catch(() => ({}));
-    throw new Error(err.error?.message || resp.statusText);
-  }
-  return raw ? resp : resp.json();
-}
-
-// ── INIT ─────────────────────────────────────────────────────────────────────
-async function init() {
-  // Token guardado en sesión?
-  const saved = sessionStorage.getItem('ms_token');
-  if (saved) { accessToken = saved; }
-
-  // Callback de OAuth?
-  const params = new URLSearchParams(location.search);
-  if (params.get('code')) {
-    const ok = await handleCallback();
-    if (!ok) return;
-  }
-
-  if (accessToken) {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('btn-refresh').style.display = 'inline-block';
-    await loadAndRender();
-  }
-}
-
-async function loadAndRender() {
-  const data = await fetchExcelFromSharePoint();
-  if (!data) return;
-  globalData = data;
-  renderAll(data);
-  document.getElementById('dashboard').style.display = 'block';
-  document.getElementById('last-update').textContent = 'Actualizado: ' + new Date().toLocaleString('es-CR', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
-}
-
-async function refreshData() {
-  const btn = document.getElementById('btn-refresh');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>';
-  await loadAndRender();
-  btn.disabled = false;
-  btn.textContent = '↻ Actualizar datos';
-}
-
-// ── RENDER ───────────────────────────────────────────────────────────────────
 function destroyChart(id) {
   if (chartInstances[id]) { chartInstances[id].destroy(); delete chartInstances[id]; }
 }
@@ -380,178 +243,261 @@ function renderAll(data) {
 function renderKPIs(data) {
   const funcionarios = [...new Set(data.map(r => r['Funcionario']).filter(Boolean))];
   const semanas = [...new Set(data.map(r => r['Semana ']).filter(Boolean))];
-  const cumple   = data.filter(r => r['Cumple Semanal? '] === 'Cumple').length;
+  const cumple = data.filter(r => r['Cumple Semanal? '] === 'Cumple').length;
   const faltante = data.filter(r => r['Cumple Semanal? '] === 'Faltante').length;
-  const excedido = data.filter(r => r['Cumple Semanal? '] === 'Excedido').length;
-  const total    = cumple + faltante + excedido;
-  const pct      = total > 0 ? Math.round(cumple / total * 100) : 0;
-  const proyectos = [...new Set(data.map(r => r['Reporte Proyecto - Nombre proyecto']).filter(Boolean))].length;
-  const atrasados = [...new Set(data.filter(r => (r['Reporte Proyecto - Estado del proyecto']||'').toLowerCase().includes('atrasado')).map(r => r['Reporte Proyecto - Nombre proyecto']).filter(Boolean))].length;
+  const total = cumple + faltante + data.filter(r => r['Cumple Semanal? '] === 'Excedido').length;
+  const pct = total > 0 ? Math.round(cumple / total * 100) : 0;
+  const proyectosActivos = [...new Set(data.map(r => r['Reporte Proyecto - Nombre proyecto']).filter(Boolean))].length;
+  const atrasados = data.filter(r => (r['Reporte Proyecto - Estado del proyecto']||'').toLowerCase().includes('atrasado'));
+  const atrasadosProy = [...new Set(atrasados.map(r => r['Reporte Proyecto - Nombre proyecto']).filter(Boolean))].length;
+
   document.getElementById('kpi-grid').innerHTML = `
     <div class="kpi blue"><div class="label">Funcionarios</div><div class="value">${funcionarios.length}</div><div class="sub">${semanas.length} semanas</div></div>
-    <div class="kpi ${pct>=80?'green':'red'}"><div class="label">Cumplimiento</div><div class="value">${pct}%</div><div class="sub">${cumple} de ${total} registros</div></div>
+    <div class="kpi ${pct >= 80 ? 'green':'red'}"><div class="label">Cumplimiento</div><div class="value">${pct}%</div><div class="sub">${cumple} de ${total} registros</div></div>
     <div class="kpi red"><div class="label">Faltantes</div><div class="value">${faltante}</div><div class="sub">registros pendientes</div></div>
-    <div class="kpi blue"><div class="label">Proyectos</div><div class="value">${proyectos}</div><div class="sub">en seguimiento</div></div>
-    <div class="kpi ${atrasados>0?'red':'green'}"><div class="label">Atrasados</div><div class="value">${atrasados}</div><div class="sub">proyectos</div></div>`;
+    <div class="kpi blue"><div class="label">Proyectos</div><div class="value">${proyectosActivos}</div><div class="sub">en seguimiento</div></div>
+    <div class="kpi ${atrasadosProy > 0 ? 'red':'green'}"><div class="label">Atrasados</div><div class="value">${atrasadosProy}</div><div class="sub">proyectos</div></div>
+  `;
 }
 
 function renderCumplimiento(data) {
   const func = {};
   data.forEach(r => {
-    const f = r['Funcionario'], c = r['Cumple Semanal? '];
+    const f = r['Funcionario']; const c = r['Cumple Semanal? '];
     if (!f || !c) return;
-    if (!func[f]) func[f] = { Cumple:0, Faltante:0, Excedido:0 };
+    if (!func[f]) func[f] = { Cumple: 0, Faltante: 0, Excedido: 0 };
     if (func[f][c] !== undefined) func[f][c]++;
   });
   const rows = Object.entries(func).map(([name, v]) => {
     const total = v.Cumple + v.Faltante + v.Excedido;
     const pct = total > 0 ? Math.round(v.Cumple / total * 100) : 0;
-    const ini = name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
-    return `<tr><td><strong>${ini}</strong> ${name.split(' ').slice(0,2).join(' ')}</td>
+    const initials = name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    return `<tr>
+      <td><strong>${initials}</strong> ${name.split(' ').slice(0,-1).join(' ')}</td>
       <td><span class="pill p-cumple">${v.Cumple}</span></td>
       <td><span class="pill p-faltante">${v.Faltante}</span></td>
       <td><span class="pill p-excedido">${v.Excedido}</span></td>
-      <td>${pct}%</td></tr>`;
+      <td>${pct}%</td>
+    </tr>`;
   }).join('');
   document.getElementById('cump-table-wrap').innerHTML = `
     <table class="cump-table">
-      <thead><tr><th>Funcionario</th><th>✅</th><th>⚠️</th><th>↑</th><th>%</th></tr></thead>
+      <thead><tr><th>Funcionario</th><th>✅ Cumple</th><th>⚠️ Faltante</th><th>↑ Excedido</th><th>%</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
 }
 
 function renderSemana(data) {
   destroyChart('chartSemana');
-  const map = {};
-  data.forEach(r => { const s=r['Semana '], m=parseFloat(r['Minutos Reportados']); if(s&&!isNaN(m)) map[s]=(map[s]||0)+m; });
-  const labels = Object.keys(map).sort(), vals = labels.map(l=>Math.round(map[l]));
+  const semMap = {};
+  data.forEach(r => {
+    const s = r['Semana ']; const m = parseFloat(r['Minutos Reportados']);
+    if (!s || isNaN(m)) return;
+    semMap[s] = (semMap[s] || 0) + m;
+  });
+  const labels = Object.keys(semMap).sort();
+  const vals = labels.map(l => Math.round(semMap[l]));
   chartInstances['chartSemana'] = new Chart(document.getElementById('chartSemana'), {
-    type:'bar', data:{ labels, datasets:[{ label:'Minutos', data:vals, backgroundColor:'#2d5be3', borderRadius:4 }] },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ x:{ ticks:{ font:{ size:10 } } }, y:{ ticks:{ font:{ size:10 } } } } }
+    type: 'bar',
+    data: { labels, datasets: [{ label: 'Minutos totales', data: vals, backgroundColor: '#2d5be3', borderRadius: 4 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { font: { size: 10 } } }, y: { ticks: { font: { size: 10 } } } } }
   });
 }
 
 function renderEstadoProyectos(data) {
   destroyChart('chartEstado');
-  const est={}, seen=new Set();
+  const estado = {};
+  const seen = new Set();
   data.forEach(r => {
-    const p=r['Reporte Proyecto - Nombre proyecto'], e=(r['Reporte Proyecto - Estado del proyecto']||'').trim();
-    if(!p||!e||seen.has(p)) return; seen.add(p); est[e]=(est[e]||0)+1;
+    const proj = r['Reporte Proyecto - Nombre proyecto'];
+    const est = (r['Reporte Proyecto - Estado del proyecto']||'').trim();
+    if (!proj || !est || seen.has(proj)) return;
+    seen.add(proj);
+    estado[est] = (estado[est] || 0) + 1;
   });
-  const labels=Object.keys(est), vals=labels.map(l=>est[l]);
-  const colors=labels.map(l=>l.toLowerCase().includes('atrasado')?'#c0392b':l.toLowerCase().includes('día')?'#1a7a4a':l.toLowerCase().includes('entregado')?'#2d5be3':'#b45309');
+  const labels = Object.keys(estado);
+  const vals = labels.map(l => estado[l]);
+  const colors = labels.map(l => l.toLowerCase().includes('atrasado') ? '#c0392b' : l.toLowerCase().includes('día') ? '#1a7a4a' : l.toLowerCase().includes('entregado') ? '#2d5be3' : '#b45309');
   chartInstances['chartEstado'] = new Chart(document.getElementById('chartEstado'), {
-    type:'doughnut', data:{ labels, datasets:[{ data:vals, backgroundColor:colors, borderWidth:2, borderColor:'#fff' }] },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ font:{ size:11 }, boxWidth:12, padding:10 } } } }
+    type: 'doughnut',
+    data: { labels, datasets: [{ data: vals, backgroundColor: colors, borderWidth: 2, borderColor: '#fff' }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, boxWidth: 12, padding: 10 } } } }
   });
 }
 
 function renderAvanceProyectos(data) {
-  const map={};
+  const projMap = {};
   data.forEach(r => {
-    const p=r['Reporte Proyecto - Nombre proyecto']; if(!p) return;
-    map[p]={ esperado:parseFloat(r['Reporte Proyecto - Porcentaje avance esperado'])||map[p]?.esperado||0,
-             real:parseFloat(r['Reporte Proyecto - Porcentaje de avance real'])||map[p]?.real||0,
-             estado:(r['Reporte Proyecto - Estado del proyecto']||'').trim()||map[p]?.estado||'' };
+    const p = r['Reporte Proyecto - Nombre proyecto'];
+    if (!p) return;
+    projMap[p] = {
+      esperado: parseFloat(r['Reporte Proyecto - Porcentaje avance esperado']) || projMap[p]?.esperado || 0,
+      real: parseFloat(r['Reporte Proyecto - Porcentaje de avance real']) || projMap[p]?.real || 0,
+      estado: (r['Reporte Proyecto - Estado del proyecto']||'').trim() || projMap[p]?.estado || ''
+    };
   });
-  const rows=Object.entries(map).map(([name,v])=>{
-    const e=v.estado.toLowerCase();
-    let badge='En proceso', cls='s-dia';
-    if(e.includes('atrasado')){badge='Atrasado';cls='s-atrasado';}
-    else if(e.includes('entregado')){badge='Entregado';cls='s-entregado';}
-    else if(e.includes('iniciar')){badge='Por iniciar';cls='s-iniciar';}
-    const real=Math.min(100,Math.round(v.real||0));
-    const fc=e.includes('atrasado')?'#c0392b':e.includes('entregado')?'#2d5be3':'#1a7a4a';
-    const short=name.length>32?name.substring(0,30)+'…':name;
-    return `<tr><td style="font-size:11px">${short}</td><td><span class="status-badge ${cls}">${badge}</span></td>
-      <td style="min-width:80px"><div style="font-size:10px;color:#6b6860;margin-bottom:2px">${real}%</div>
-      <div class="progress-bar"><div class="progress-fill" style="width:${real}%;background:${fc}"></div></div></td></tr>`;
+  const rows = Object.entries(projMap).map(([name, v]) => {
+    const estado = v.estado.toLowerCase();
+    let badge = 'En proceso', cls = 's-dia';
+    if (estado.includes('atrasado')) { badge = 'Atrasado'; cls = 's-atrasado'; }
+    else if (estado.includes('entregado')) { badge = 'Entregado'; cls = 's-entregado'; }
+    else if (estado.includes('iniciar')) { badge = 'Por iniciar'; cls = 's-iniciar'; }
+    const real = Math.min(100, Math.round(v.real || 0));
+    const esp = Math.min(100, Math.round(v.esperado || 0));
+    const fillColor = estado.includes('atrasado') ? '#c0392b' : estado.includes('entregado') ? '#2d5be3' : '#1a7a4a';
+    const shortName = name.length > 32 ? name.substring(0, 30) + '…' : name;
+    return `<tr>
+      <td style="font-size:11px">${shortName}</td>
+      <td><span class="status-badge ${cls}">${badge}</span></td>
+      <td style="min-width:80px">
+        <div style="font-size:10px;color:#6b6860;margin-bottom:2px">${real}% / ${esp}%</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${real}%;background:${fillColor}"></div></div>
+      </td>
+    </tr>`;
   }).join('');
-  document.getElementById('proj-table-wrap').innerHTML=`
-    <table class="proj-table"><thead><tr><th>Proyecto</th><th>Estado</th><th>Avance</th></tr></thead><tbody>${rows}</tbody></table>`;
+  document.getElementById('proj-table-wrap').innerHTML = `
+    <table class="proj-table">
+      <thead><tr><th>Proyecto</th><th>Estado</th><th>Real / Esp.</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
 }
 
 function renderDepto(data) {
   destroyChart('chartDepto');
-  const map={};
-  data.forEach(r=>{ const d=r['Departamento'],m=parseFloat(r['Minutos Reportados']); if(d&&!isNaN(m)) map[d]=(map[d]||0)+m; });
-  const labels=Object.keys(map), vals=labels.map(l=>Math.round(map[l]/60));
-  const colors=['#2d5be3','#1a7a4a','#b45309','#7c3aed'];
+  const deptoMin = {};
+  data.forEach(r => {
+    const d = r['Departamento']; const m = parseFloat(r['Minutos Reportados']);
+    if (!d || isNaN(m)) return;
+    deptoMin[d] = (deptoMin[d] || 0) + m;
+  });
+  const labels = Object.keys(deptoMin);
+  const vals = labels.map(l => Math.round(deptoMin[l] / 60));
+  const colors = ['#2d5be3','#1a7a4a','#b45309','#7c3aed'];
   chartInstances['chartDepto'] = new Chart(document.getElementById('chartDepto'), {
-    type:'bar', data:{ labels, datasets:[{ label:'Horas', data:vals, backgroundColor:colors.slice(0,labels.length), borderRadius:4 }] },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ x:{ ticks:{ font:{ size:10 } } }, y:{ ticks:{ font:{ size:10 } } } } }
+    type: 'bar',
+    data: { labels, datasets: [{ label: 'Horas', data: vals, backgroundColor: colors.slice(0, labels.length), borderRadius: 4 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { font: { size: 10 } } }, y: { ticks: { font: { size: 10 } } } } }
   });
 }
 
 function renderActividades(data) {
   destroyChart('chartActiv');
-  const map={};
-  data.forEach(r=>{ const a=r['Actividades propias del departamento - Consultor']; if(a) map[a]=(map[a]||0)+1; });
-  const sorted=Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,7);
-  const labels=sorted.map(([k])=>k.length>22?k.substring(0,20)+'…':k), vals=sorted.map(([,v])=>v);
+  const actMap = {};
+  data.forEach(r => {
+    const a = r['Actividades propias del departamento - Consultor'];
+    if (!a) return;
+    actMap[a] = (actMap[a] || 0) + 1;
+  });
+  const sorted = Object.entries(actMap).sort((a,b) => b[1]-a[1]).slice(0, 7);
+  const labels = sorted.map(([k]) => k.length > 22 ? k.substring(0,20)+'…' : k);
+  const vals = sorted.map(([,v]) => v);
   chartInstances['chartActiv'] = new Chart(document.getElementById('chartActiv'), {
-    type:'bar', data:{ labels, datasets:[{ label:'Registros', data:vals, backgroundColor:'#2d5be3', borderRadius:4 }] },
-    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ x:{ ticks:{ font:{ size:10 } } }, y:{ ticks:{ font:{ size:10 } } } } }
+    type: 'bar',
+    data: { labels, datasets: [{ label: 'Registros', data: vals, backgroundColor: '#2d5be3', borderRadius: 4 }] },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { x: { ticks: { font: { size: 10 } } }, y: { ticks: { font: { size: 10 } } } }
+    }
   });
 }
 
 function buildSummary(data) {
-  const funcionarios=[...new Set(data.map(r=>r['Funcionario']).filter(Boolean))];
-  const semanas=[...new Set(data.map(r=>r['Semana ']).filter(Boolean))].sort();
-  const cumple=data.filter(r=>r['Cumple Semanal? ']==='Cumple').length;
-  const faltante=data.filter(r=>r['Cumple Semanal? ']==='Faltante').length;
-  const excedido=data.filter(r=>r['Cumple Semanal? ']==='Excedido').length;
-  const porFunc={};
-  data.forEach(r=>{ const f=r['Funcionario'],c=r['Cumple Semanal? ']; if(!f||!c) return; if(!porFunc[f]) porFunc[f]={Cumple:0,Faltante:0,Excedido:0}; if(porFunc[f][c]!==undefined) porFunc[f][c]++; });
-  const funcRes=Object.entries(porFunc).map(([n,v])=>`${n}: ${v.Cumple} cumple, ${v.Faltante} faltante, ${v.Excedido} excedido`).join(' | ');
-  const projMap={};
-  data.forEach(r=>{ const p=r['Reporte Proyecto - Nombre proyecto']; if(!p) return; projMap[p]={ real:parseFloat(r['Reporte Proyecto - Porcentaje de avance real'])||projMap[p]?.real||0, estado:(r['Reporte Proyecto - Estado del proyecto']||'').trim()||projMap[p]?.estado||'' }; });
-  const projRes=Object.entries(projMap).map(([n,v])=>`${n}: ${v.real}% avance, estado: ${v.estado}`).join(' | ');
-  dataSummary=`DATOS DASHBOARD INDICADORES 2026 (${new Date().toLocaleDateString('es-CR')})
-Funcionarios (${funcionarios.length}): ${funcionarios.join(', ')}
-Semanas: ${semanas.join(', ')}
-Cumplimiento: Cumple=${cumple}, Faltante=${faltante}, Excedido=${excedido}
-Por funcionario: ${funcRes}
-Proyectos: ${projRes}
-Departamentos: ${[...new Set(data.map(r=>r['Departamento']).filter(Boolean))].join(', ')}`;
+  const funcionarios = [...new Set(data.map(r => r['Funcionario']).filter(Boolean))];
+  const semanas = [...new Set(data.map(r => r['Semana ']).filter(Boolean))].sort();
+  const cumple = data.filter(r => r['Cumple Semanal? '] === 'Cumple').length;
+  const faltante = data.filter(r => r['Cumple Semanal? '] === 'Faltante').length;
+  const excedido = data.filter(r => r['Cumple Semanal? '] === 'Excedido').length;
+
+  // Por funcionario
+  const porFunc = {};
+  data.forEach(r => {
+    const f = r['Funcionario']; const c = r['Cumple Semanal? '];
+    if (!f || !c) return;
+    if (!porFunc[f]) porFunc[f] = { Cumple: 0, Faltante: 0, Excedido: 0 };
+    if (porFunc[f][c] !== undefined) porFunc[f][c]++;
+  });
+  const funcResumen = Object.entries(porFunc).map(([n,v]) => `${n}: ${v.Cumple} cumple, ${v.Faltante} faltante, ${v.Excedido} excedido`).join(' | ');
+
+  // Proyectos
+  const projMap = {};
+  data.forEach(r => {
+    const p = r['Reporte Proyecto - Nombre proyecto'];
+    if (!p) return;
+    projMap[p] = {
+      real: parseFloat(r['Reporte Proyecto - Porcentaje de avance real']) || projMap[p]?.real || 0,
+      estado: (r['Reporte Proyecto - Estado del proyecto']||'').trim() || projMap[p]?.estado || ''
+    };
+  });
+  const projResumen = Object.entries(projMap).map(([n,v]) => `${n}: ${v.real}% avance, estado: ${v.estado}`).join(' | ');
+
+  dataSummary = `
+RESUMEN DE DATOS DEL EXCEL DE INDICADORES 2026:
+- Total registros: ${data.length}
+- Funcionarios: ${funcionarios.join(', ')}
+- Semanas en el período: ${semanas.join(', ')}
+- Cumplimiento semanal: Cumple=${cumple}, Faltante=${faltante}, Excedido=${excedido}
+- Por funcionario: ${funcResumen}
+- Proyectos y avance: ${projResumen}
+- Departamentos: ${[...new Set(data.map(r=>r['Departamento']).filter(Boolean))].join(', ')}
+  `.trim();
 }
 
-// ── CHAT IA ──────────────────────────────────────────────────────────────────
 async function sendChat() {
-  const input=document.getElementById('chat-input');
-  const q=input.value.trim(); if(!q) return;
-  if(!globalData){ addMsg('ai','Primero carga los datos desde SharePoint.'); return; }
-  addMsg('user',q); input.value='';
-  const lid=addMsg('ai','Analizando...', true);
-  document.getElementById('send-btn').disabled=true;
+  const input = document.getElementById('chat-input');
+  const question = input.value.trim();
+  if (!question) return;
+  if (!globalData) { addMsg('ai', 'Primero sube tu archivo Excel para poder analizar los datos.'); return; }
+  addMsg('user', question);
+  input.value = '';
+  const loadId = addMsg('ai', 'Analizando...', true);
+  document.getElementById('send-btn').disabled = true;
+
   try {
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000,
-        system:'Eres un asistente analítico experto en gestión de proyectos y equipos. Analiza los datos del dashboard de indicadores operativos y responde en español de forma concisa y directa. Usa los datos específicos cuando sea relevante.',
-        messages:[{role:'user', content:`Datos actuales:\n\n${dataSummary}\n\nPregunta: ${q}`}] })
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: `Eres un asistente analítico experto en gestión de proyectos y equipos de trabajo. Recibirás un resumen de datos de un Excel de indicadores operativos de una empresa de tecnología. Responde en español de forma concisa, clara y útil. Usa datos concretos del resumen cuando sea relevante. No uses markdown excesivo, responde en texto natural.`,
+        messages: [
+          { role: 'user', content: `Estos son los datos actuales del dashboard:\n\n${dataSummary}\n\nPregunta del usuario: ${question}` }
+        ]
+      })
     });
-    const json=await resp.json();
-    const text=json.content?.map(b=>b.text||'').join('')||'Sin respuesta';
-    removeMsg(lid); addMsg('ai',text);
-  } catch(e) { removeMsg(lid); addMsg('ai','Error: '+e.message); }
-  document.getElementById('send-btn').disabled=false;
+    const json = await resp.json();
+    const text = json.content?.map(b => b.text||'').join('') || 'Sin respuesta';
+    removeMsg(loadId);
+    addMsg('ai', text);
+  } catch(err) {
+    removeMsg(loadId);
+    addMsg('ai', 'Error al conectar con la IA: ' + err.message);
+  }
+  document.getElementById('send-btn').disabled = false;
 }
 
-function askQuick(q){ document.getElementById('chat-input').value=q; sendChat(); }
-function addMsg(type,text,loading=false){
-  const id='msg-'+(++msgCounter);
-  const div=document.createElement('div');
-  div.className='msg '+type+(loading?' loading':''); div.id=id; div.textContent=text;
+function askQuick(q) {
+  document.getElementById('chat-input').value = q;
+  sendChat();
+}
+
+let msgCounter = 0;
+function addMsg(type, text, loading=false) {
+  const id = 'msg-' + (++msgCounter);
+  const div = document.createElement('div');
+  div.className = 'msg ' + type + (loading ? ' loading' : '');
+  div.id = id;
+  div.textContent = text;
   document.getElementById('chat-msgs').appendChild(div);
-  document.getElementById('chat-msgs').scrollTop=99999; return id;
+  document.getElementById('chat-msgs').scrollTop = 99999;
+  return id;
 }
-function removeMsg(id){ const el=document.getElementById(id); if(el) el.remove(); }
-function showStatus(msg){ const b=document.getElementById('status-bar'); b.textContent=msg; b.style.display='block'; }
-function hideStatus(){ document.getElementById('status-bar').style.display='none'; }
-
-// Arrancar
-init();
+function removeMsg(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+}
 </script>
 </body>
 </html>
