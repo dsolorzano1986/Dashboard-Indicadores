@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Indicadores 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #f0eeea;
+    --border: #e0ddd6;
+    --text: #1a1916;
+    --text2: #6b6860;
+    --accent: #2d5be3;
+    --accent2: #1a3a9e;
+    --green: #1a7a4a;
+    --green-bg: #e6f4ec;
+    --red: #c0392b;
+    --red-bg: #fdecea;
+    --amber: #b45309;
+    --amber-bg: #fef3cd;
+    --blue-bg: #e8f0fe;
+    --radius: 10px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; min-height: 100vh; }
+
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  header h1 { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; }
+  header span { font-size: 12px; color: var(--text2); }
+
+  .upload-bar { background: var(--accent); color: white; padding: 10px 24px; display: flex; align-items: center; gap: 12px; }
+  .upload-bar label { cursor: pointer; background: white; color: var(--accent); font-weight: 600; font-size: 12px; padding: 6px 14px; border-radius: 6px; }
+  .upload-bar input { display: none; }
+  #file-name { font-size: 12px; opacity: 0.85; }
+
+  .main { padding: 20px 24px; max-width: 1200px; margin: 0 auto; }
+
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); }
+  .kpi .label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .kpi .value { font-size: 26px; font-weight: 700; letter-spacing: -1px; }
+  .kpi .sub { font-size: 11px; color: var(--text2); margin-top: 2px; }
+  .kpi.green .value { color: var(--green); }
+  .kpi.red .value { color: var(--red); }
+  .kpi.blue .value { color: var(--accent); }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media (max-width: 800px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); }
+  .card h2 { font-size: 13px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 14px; }
+
+  .chart-wrap { position: relative; width: 100%; }
+
+  /* Tabla proyectos */
+  .proj-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .proj-table th { text-align: left; color: var(--text2); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  .proj-table td { padding: 8px 8px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .proj-table tr:last-child td { border-bottom: none; }
+  .status-badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; }
+  .s-atrasado { background: var(--red-bg); color: var(--red); }
+  .s-dia { background: var(--green-bg); color: var(--green); }
+  .s-entregado { background: var(--blue-bg); color: var(--accent2); }
+  .s-iniciar { background: var(--amber-bg); color: var(--amber); }
+
+  .progress-bar { background: #e8e6e0; border-radius: 4px; height: 6px; overflow: hidden; width: 100%; }
+  .progress-fill { height: 100%; border-radius: 4px; transition: width 0.4s; }
+
+  /* Cumplimiento table */
+  .cump-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .cump-table th { text-align: left; color: var(--text2); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  .cump-table td { padding: 7px 8px; border-bottom: 1px solid var(--border); }
+  .cump-table tr:last-child td { border-bottom: none; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; }
+  .p-cumple { background: var(--green-bg); color: var(--green); }
+  .p-faltante { background: var(--red-bg); color: var(--red); }
+  .p-excedido { background: var(--amber-bg); color: var(--amber); }
+
+  /* Chat IA */
+  .chat-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 20px; }
+  .chat-header { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+  .chat-header .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+  .chat-header span { font-size: 13px; font-weight: 600; }
+  .chat-header small { font-size: 11px; color: var(--text2); margin-left: auto; }
+  .chat-msgs { padding: 12px 16px; min-height: 120px; max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+  .msg { padding: 8px 12px; border-radius: 8px; font-size: 13px; line-height: 1.5; max-width: 85%; }
+  .msg.ai { background: var(--surface2); color: var(--text); align-self: flex-start; border: 1px solid var(--border); }
+  .msg.user { background: var(--accent); color: white; align-self: flex-end; }
+  .msg.loading { color: var(--text2); font-style: italic; }
+  .chat-input-row { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--border); }
+  .chat-input-row input { flex: 1; border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; font-size: 13px; outline: none; background: var(--bg); }
+  .chat-input-row input:focus { border-color: var(--accent); }
+  .chat-input-row button { background: var(--accent); color: white; border: none; border-radius: 6px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .chat-input-row button:hover { background: var(--accent2); }
+  .chat-input-row button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .quick-btns { padding: 0 12px 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .quick-btn { border: 1px solid var(--border); background: var(--surface2); color: var(--text2); border-radius: 20px; padding: 4px 12px; font-size: 11px; cursor: pointer; }
+  .quick-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--blue-bg); }
+
+  #no-data { text-align: center; padding: 60px 20px; color: var(--text2); }
+  #no-data .icon { font-size: 48px; margin-bottom: 12px; }
+  #no-data p { font-size: 15px; margin-bottom 6px; }
+  #no-data small { font-size: 12px; }
+
+  #dashboard { display: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📊 Dashboard Indicadores 2026</h1>
+  <span id="last-update">Sin datos cargados</span>
+</header>
+
+<div class="upload-bar">
+  <label for="fileInput">⬆ Cargar Excel actualizado</label>
+  <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" onchange="loadFile(this.files[0])">
+  <span id="file-name">Sube tu Excel para ver los gráficos</span>
+</div>
+
+<div class="main">
+
+  <div id="no-data">
+    <div class="icon">📁</div>
+    <p><strong>Sube tu archivo Excel para comenzar</strong></p>
+    <small>Haz clic en "Cargar Excel actualizado" arriba · Funciona con .xlsx, .xls</small>
+  </div>
+
+  <div id="dashboard">
+
+    <!-- KPIs -->
+    <div class="kpi-grid" id="kpi-grid"></div>
+
+    <!-- Fila 1: cumplimiento + tiempo por semana -->
+    <div class="grid2" id="row1">
+      <div class="card">
+        <h2>Cumplimiento semanal por funcionario</h2>
+        <div id="cump-table-wrap"></div>
+      </div>
+      <div class="card">
+        <h2>Horas reportadas por semana (minutos)</h2>
+        <div class="chart-wrap" style="height:260px"><canvas id="chartSemana" role="img" aria-label="Horas reportadas por semana"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Fila 2: estado proyectos + avance -->
+    <div class="grid2" id="row2">
+      <div class="card">
+        <h2>Estado de proyectos</h2>
+        <div class="chart-wrap" style="height:220px"><canvas id="chartEstado" role="img" aria-label="Distribución estado proyectos"></canvas></div>
+      </div>
+      <div class="card">
+        <h2>Avance de proyectos activos</h2>
+        <div id="proj-table-wrap" style="max-height:240px;overflow-y:auto"></div>
+      </div>
+    </div>
+
+    <!-- Fila 3: tiempo por departamento + actividades -->
+    <div class="grid2" id="row3">
+      <div class="card">
+        <h2>Tiempo total por departamento</h2>
+        <div class="chart-wrap" style="height:220px"><canvas id="chartDepto" role="img" aria-label="Tiempo por departamento"></canvas></div>
+      </div>
+      <div class="card">
+        <h2>Distribución actividades (Consultoría)</h2>
+        <div class="chart-wrap" style="height:220px"><canvas id="chartActiv" role="img" aria-label="Distribución de actividades"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Chat IA -->
+    <div class="chat-section">
+      <div class="chat-header">
+        <div class="dot"></div>
+        <span>Análisis con IA</span>
+        <small>Pregunta sobre tus datos cargados</small>
+      </div>
+      <div class="chat-msgs" id="chat-msgs">
+        <div class="msg ai">Hola 👋 Ya tengo tus datos cargados. Puedes preguntarme cualquier cosa: tendencias, alertas, comparativos por funcionario, estado de proyectos, etc.</div>
+      </div>
+      <div class="quick-btns">
+        <button class="quick-btn" onclick="askQuick('¿Quién tiene más faltantes de reporte?')">¿Quién tiene más faltantes?</button>
+        <button class="quick-btn" onclick="askQuick('¿Cuáles proyectos están más atrasados?')">Proyectos atrasados</button>
+        <button class="quick-btn" onclick="askQuick('Resume el desempeño general del equipo')">Resumen general</button>
+        <button class="quick-btn" onclick="askQuick('¿Qué semana tuvo mejor cumplimiento?')">Mejor semana</button>
+      </div>
+      <div class="chat-input-row">
+        <input type="text" id="chat-input" placeholder="Escribe tu pregunta sobre los datos..." onkeydown="if(event.key==='Enter') sendChat()">
+        <button onclick="sendChat()" id="send-btn">Enviar</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let chartInstances = {};
+let globalData = null;
+let dataSummary = '';
+
+function loadFile(file) {
+  if (!file) return;
+  document.getElementById('file-name').textContent = 'Cargando ' + file.name + '...';
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const raw = XLSX.utils.sheet_to_json(ws, { defval: '' });
+      globalData = raw;
+      document.getElementById('file-name').textContent = file.name + ' · ' + raw.length + ' registros';
+      document.getElementById('last-update').textContent = 'Actualizado: ' + new Date().toLocaleDateString('es-CR', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+      renderAll(raw);
+      document.getElementById('no-data').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+    } catch(err) {
+      document.getElementById('file-name').textContent = 'Error: ' + err.message;
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function destroyChart(id) {
+  if (chartInstances[id]) { chartInstances[id].destroy(); delete chartInstances[id]; }
+}
+
+function renderAll(data) {
+  renderKPIs(data);
+  renderCumplimiento(data);
+  renderSemana(data);
+  renderEstadoProyectos(data);
+  renderAvanceProyectos(data);
+  renderDepto(data);
+  renderActividades(data);
+  buildSummary(data);
+}
+
+function renderKPIs(data) {
+  const funcionarios = [...new Set(data.map(r => r['Funcionario']).filter(Boolean))];
+  const semanas = [...new Set(data.map(r => r['Semana ']).filter(Boolean))];
+  const cumple = data.filter(r => r['Cumple Semanal? '] === 'Cumple').length;
+  const faltante = data.filter(r => r['Cumple Semanal? '] === 'Faltante').length;
+  const total = cumple + faltante + data.filter(r => r['Cumple Semanal? '] === 'Excedido').length;
+  const pct = total > 0 ? Math.round(cumple / total * 100) : 0;
+  const proyectosActivos = [...new Set(data.map(r => r['Reporte Proyecto - Nombre proyecto']).filter(Boolean))].length;
+  const atrasados = data.filter(r => (r['Reporte Proyecto - Estado del proyecto']||'').toLowerCase().includes('atrasado'));
+  const atrasadosProy = [...new Set(atrasados.map(r => r['Reporte Proyecto - Nombre proyecto']).filter(Boolean))].length;
+
+  document.getElementById('kpi-grid').innerHTML = `
+    <div class="kpi blue"><div class="label">Funcionarios</div><div class="value">${funcionarios.length}</div><div class="sub">${semanas.length} semanas</div></div>
+    <div class="kpi ${pct >= 80 ? 'green':'red'}"><div class="label">Cumplimiento</div><div class="value">${pct}%</div><div class="sub">${cumple} de ${total} registros</div></div>
+    <div class="kpi red"><div class="label">Faltantes</div><div class="value">${faltante}</div><div class="sub">registros pendientes</div></div>
+    <div class="kpi blue"><div class="label">Proyectos</div><div class="value">${proyectosActivos}</div><div class="sub">en seguimiento</div></div>
+    <div class="kpi ${atrasadosProy > 0 ? 'red':'green'}"><div class="label">Atrasados</div><div class="value">${atrasadosProy}</div><div class="sub">proyectos</div></div>
+  `;
+}
+
+function renderCumplimiento(data) {
+  const func = {};
+  data.forEach(r => {
+    const f = r['Funcionario']; const c = r['Cumple Semanal? '];
+    if (!f || !c) return;
+    if (!func[f]) func[f] = { Cumple: 0, Faltante: 0, Excedido: 0 };
+    if (func[f][c] !== undefined) func[f][c]++;
+  });
+  const rows = Object.entries(func).map(([name, v]) => {
+    const total = v.Cumple + v.Faltante + v.Excedido;
+    const pct = total > 0 ? Math.round(v.Cumple / total * 100) : 0;
+    const initials = name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    return `<tr>
+      <td><strong>${initials}</strong> ${name.split(' ').slice(0,-1).join(' ')}</td>
+      <td><span class="pill p-cumple">${v.Cumple}</span></td>
+      <td><span class="pill p-faltante">${v.Faltante}</span></td>
+      <td><span class="pill p-excedido">${v.Excedido}</span></td>
+      <td>${pct}%</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('cump-table-wrap').innerHTML = `
+    <table class="cump-table">
+      <thead><tr><th>Funcionario</th><th>✅ Cumple</th><th>⚠️ Faltante</th><th>↑ Excedido</th><th>%</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+function renderSemana(data) {
+  destroyChart('chartSemana');
+  const semMap = {};
+  data.forEach(r => {
+    const s = r['Semana ']; const m = parseFloat(r['Minutos Reportados']);
+    if (!s || isNaN(m)) return;
+    semMap[s] = (semMap[s] || 0) + m;
+  });
+  const labels = Object.keys(semMap).sort();
+  const vals = labels.map(l => Math.round(semMap[l]));
+  chartInstances['chartSemana'] = new Chart(document.getElementById('chartSemana'), {
+    type: 'bar',
+    data: { labels, datasets: [{ label: 'Minutos totales', data: vals, backgroundColor: '#2d5be3', borderRadius: 4 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { font: { size: 10 } } }, y: { ticks: { font: { size: 10 } } } } }
+  });
+}
+
+function renderEstadoProyectos(data) {
+  destroyChart('chartEstado');
+  const estado = {};
+  const seen = new Set();
+  data.forEach(r => {
+    const proj = r['Reporte Proyecto - Nombre proyecto'];
+    const est = (r['Reporte Proyecto - Estado del proyecto']||'').trim();
+    if (!proj || !est || seen.has(proj)) return;
+    seen.add(proj);
+    estado[est] = (estado[est] || 0) + 1;
+  });
+  const labels = Object.keys(estado);
+  const vals = labels.map(l => estado[l]);
+  const colors = labels.map(l => l.toLowerCase().includes('atrasado') ? '#c0392b' : l.toLowerCase().includes('día') ? '#1a7a4a' : l.toLowerCase().includes('entregado') ? '#2d5be3' : '#b45309');
+  chartInstances['chartEstado'] = new Chart(document.getElementById('chartEstado'), {
+    type: 'doughnut',
+    data: { labels, datasets: [{ data: vals, backgroundColor: colors, borderWidth: 2, borderColor: '#fff' }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, boxWidth: 12, padding: 10 } } } }
+  });
+}
+
+function renderAvanceProyectos(data) {
+  const projMap = {};
+  data.forEach(r => {
+    const p = r['Reporte Proyecto - Nombre proyecto'];
+    if (!p) return;
+    projMap[p] = {
+      esperado: parseFloat(r['Reporte Proyecto - Porcentaje avance esperado']) || projMap[p]?.esperado || 0,
+      real: parseFloat(r['Reporte Proyecto - Porcentaje de avance real']) || projMap[p]?.real || 0,
+      estado: (r['Reporte Proyecto - Estado del proyecto']||'').trim() || projMap[p]?.estado || ''
+    };
+  });
+  const rows = Object.entries(projMap).map(([name, v]) => {
+    const estado = v.estado.toLowerCase();
+    let badge = 'En proceso', cls = 's-dia';
+    if (estado.includes('atrasado')) { badge = 'Atrasado'; cls = 's-atrasado'; }
+    else if (estado.includes('entregado')) { badge = 'Entregado'; cls = 's-entregado'; }
+    else if (estado.includes('iniciar')) { badge = 'Por iniciar'; cls = 's-iniciar'; }
+    const real = Math.min(100, Math.round(v.real || 0));
+    const esp = Math.min(100, Math.round(v.esperado || 0));
+    const fillColor = estado.includes('atrasado') ? '#c0392b' : estado.includes('entregado') ? '#2d5be3' : '#1a7a4a';
+    const shortName = name.length > 32 ? name.substring(0, 30) + '…' : name;
+    return `<tr>
+      <td style="font-size:11px">${shortName}</td>
+      <td><span class="status-badge ${cls}">${badge}</span></td>
+      <td style="min-width:80px">
+        <div style="font-size:10px;color:#6b6860;margin-bottom:2px">${real}% / ${esp}%</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${real}%;background:${fillColor}"></div></div>
+      </td>
+    </tr>`;
+  }).join('');
+  document.getElementById('proj-table-wrap').innerHTML = `
+    <table class="proj-table">
+      <thead><tr><th>Proyecto</th><th>Estado</th><th>Real / Esp.</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+function renderDepto(data) {
+  destroyChart('chartDepto');
+  const deptoMin = {};
+  data.forEach(r => {
+    const d = r['Departamento']; const m = parseFloat(r['Minutos Reportados']);
+    if (!d || isNaN(m)) return;
+    deptoMin[d] = (deptoMin[d] || 0) + m;
+  });
+  const labels = Object.keys(deptoMin);
+  const vals = labels.map(l => Math.round(deptoMin[l] / 60));
+  const colors = ['#2d5be3','#1a7a4a','#b45309','#7c3aed'];
+  chartInstances['chartDepto'] = new Chart(document.getElementById('chartDepto'), {
+    type: 'bar',
+    data: { labels, datasets: [{ label: 'Horas', data: vals, backgroundColor: colors.slice(0, labels.length), borderRadius: 4 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { font: { size: 10 } } }, y: { ticks: { font: { size: 10 } } } } }
+  });
+}
+
+function renderActividades(data) {
+  destroyChart('chartActiv');
+  const actMap = {};
+  data.forEach(r => {
+    const a = r['Actividades propias del departamento - Consultor'];
+    if (!a) return;
+    actMap[a] = (actMap[a] || 0) + 1;
+  });
+  const sorted = Object.entries(actMap).sort((a,b) => b[1]-a[1]).slice(0, 7);
+  const labels = sorted.map(([k]) => k.length > 22 ? k.substring(0,20)+'…' : k);
+  const vals = sorted.map(([,v]) => v);
+  chartInstances['chartActiv'] = new Chart(document.getElementById('chartActiv'), {
+    type: 'bar',
+    data: { labels, datasets: [{ label: 'Registros', data: vals, backgroundColor: '#2d5be3', borderRadius: 4 }] },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { x: { ticks: { font: { size: 10 } } }, y: { ticks: { font: { size: 10 } } } }
+    }
+  });
+}
+
+function buildSummary(data) {
+  const funcionarios = [...new Set(data.map(r => r['Funcionario']).filter(Boolean))];
+  const semanas = [...new Set(data.map(r => r['Semana ']).filter(Boolean))].sort();
+  const cumple = data.filter(r => r['Cumple Semanal? '] === 'Cumple').length;
+  const faltante = data.filter(r => r['Cumple Semanal? '] === 'Faltante').length;
+  const excedido = data.filter(r => r['Cumple Semanal? '] === 'Excedido').length;
+
+  // Por funcionario
+  const porFunc = {};
+  data.forEach(r => {
+    const f = r['Funcionario']; const c = r['Cumple Semanal? '];
+    if (!f || !c) return;
+    if (!porFunc[f]) porFunc[f] = { Cumple: 0, Faltante: 0, Excedido: 0 };
+    if (porFunc[f][c] !== undefined) porFunc[f][c]++;
+  });
+  const funcResumen = Object.entries(porFunc).map(([n,v]) => `${n}: ${v.Cumple} cumple, ${v.Faltante} faltante, ${v.Excedido} excedido`).join(' | ');
+
+  // Proyectos
+  const projMap = {};
+  data.forEach(r => {
+    const p = r['Reporte Proyecto - Nombre proyecto'];
+    if (!p) return;
+    projMap[p] = {
+      real: parseFloat(r['Reporte Proyecto - Porcentaje de avance real']) || projMap[p]?.real || 0,
+      estado: (r['Reporte Proyecto - Estado del proyecto']||'').trim() || projMap[p]?.estado || ''
+    };
+  });
+  const projResumen = Object.entries(projMap).map(([n,v]) => `${n}: ${v.real}% avance, estado: ${v.estado}`).join(' | ');
+
+  dataSummary = `
+RESUMEN DE DATOS DEL EXCEL DE INDICADORES 2026:
+- Total registros: ${data.length}
+- Funcionarios: ${funcionarios.join(', ')}
+- Semanas en el período: ${semanas.join(', ')}
+- Cumplimiento semanal: Cumple=${cumple}, Faltante=${faltante}, Excedido=${excedido}
+- Por funcionario: ${funcResumen}
+- Proyectos y avance: ${projResumen}
+- Departamentos: ${[...new Set(data.map(r=>r['Departamento']).filter(Boolean))].join(', ')}
+  `.trim();
+}
+
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const question = input.value.trim();
+  if (!question) return;
+  if (!globalData) { addMsg('ai', 'Primero sube tu archivo Excel para poder analizar los datos.'); return; }
+  addMsg('user', question);
+  input.value = '';
+  const loadId = addMsg('ai', 'Analizando...', true);
+  document.getElementById('send-btn').disabled = true;
+
+  try {
+    const resp = await fetch('/.netlify/functions/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: `Eres un asistente analítico experto en gestión de proyectos y equipos de trabajo. Recibirás un resumen de datos de un Excel de indicadores operativos de una empresa de tecnología. Responde en español de forma concisa, clara y útil. Usa datos concretos del resumen cuando sea relevante. No uses markdown excesivo, responde en texto natural.`,
+        messages: [
+          { role: 'user', content: `Estos son los datos actuales del dashboard:\n\n${dataSummary}\n\nPregunta del usuario: ${question}` }
+        ]
+      })
+    });
+    const json = await resp.json();
+    const text = json.content?.map(b => b.text||'').join('') || 'Sin respuesta';
+    removeMsg(loadId);
+    addMsg('ai', text);
+  } catch(err) {
+    removeMsg(loadId);
+    addMsg('ai', 'Error al conectar con la IA: ' + err.message);
+  }
+  document.getElementById('send-btn').disabled = false;
+}
+
+function askQuick(q) {
+  document.getElementById('chat-input').value = q;
+  sendChat();
+}
+
+let msgCounter = 0;
+function addMsg(type, text, loading=false) {
+  const id = 'msg-' + (++msgCounter);
+  const div = document.createElement('div');
+  div.className = 'msg ' + type + (loading ? ' loading' : '');
+  div.id = id;
+  div.textContent = text;
+  document.getElementById('chat-msgs').appendChild(div);
+  document.getElementById('chat-msgs').scrollTop = 99999;
+  return id;
+}
+function removeMsg(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+}
+</script>
+</body>
+</html>
